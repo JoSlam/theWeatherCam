@@ -1,0 +1,16 @@
+body {
+    background: white url('/static/img/dust_scratches.png')
+}
+
+a:active, a:visited, a:link {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #CC6733;
+}
+
+.tm-button-orange {
+    border-color: #CC6733;
+}

@@ -1,0 +1,24 @@
+{% extends "base_page.html "%}
+{% load staticfiles %}
+
+{% block title %} The WeatherCam Image Gallery {% endblock %}
+{% block content %}
+    <div class="tm-gallery-container">
+        {% for day in img_data %}
+            <div class="day_box" style="margin-top:10px;">
+                <h2 class="tm-orange-text mb-4">{{ day.date }}</h2>
+                <div class="grid">
+                    {% for img in day.imgs %}
+                    <div class="grid-item" style="padding: 5px;">
+                        <a href="/gallery/{{ img.id }}">
+                            <img src="{% static 'weather_images/' %}{{ img.url }}" alt="weather_image" width="300px" height="240px">
+                            <br>
+                            <span style="font-size: 18px; font-weight: bold;">{{ img.created }}</span>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

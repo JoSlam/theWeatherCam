@@ -1,0 +1,122 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weather Image Details</title>
+    <!--
+
+Template 2094 Mason
+
+http://www.tooplate.com/view/2094-mason
+
+-->
+    <!-- load stylesheets -->
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400">
+    <!-- Google web font "Open Sans", https://fonts.google.com/ -->
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <!-- Font Awesome, http://fontawesome.io/ -->
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Bootstrap styles, https://getbootstrap.com/ -->
+    <link rel="stylesheet" href="{% static 'css/tooplate-style.css' %}">
+    <!-- Templatemo style -->
+    <link rel="stylesheet" href="{% static 'css/body.css' %}">
+    <!-- Body style -->
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="tm-body">
+            <div class="tm-sidebar sticky">
+                <section id="welcome" class="tm-content-box tm-banner margin-b-15">
+                    <a href="/">
+                        <div class="tm-banner-inner">
+                            <i class="material-icons md-48" style="font-size: 60px;">filter_drama</i>
+                            <h1 class="tm-banner-subtitle" style="font-size: 30px;">
+                                </i>
+                                <br/>The WeatherCam</i>
+                            </h1>
+                        </div>
+                    </a>
+                </section>
+                <nav class="tm-main-nav">
+                    <ul class="tm-main-nav-ul">
+                        <li class="tm-nav-item">
+                            <a href="/" class="tm-nav-item-link tm-button">Home</a>
+                        </li>
+                        <li class="tm-nav-item">
+                            <a href="/gallery/" class="tm-nav-item-link tm-button active">Gallery</a>
+                        </li>
+                        <li class="tm-nav-item">
+                            <a href="/archive/" class="tm-nav-item-link tm-button">Archive</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="tm-main-content tm-gallery-container">
+                <img src="{% static 'weather_images/' %}{{ image.url }}" alt="selected_image" height="720" width="1000">
+                <br>
+                <span style="font-size: 20px; font-weight:bold; color: #CC6733;">Image captured on: {{ image.created }}</span>
+            </div>
+            <!-- tm-main-content -->
+        </div>
+
+        <footer class="tm-footer text-right">
+            <p>Copyright &copy;
+                <span class="tm-current-year">2018</span> Your Company - Design:
+                <a href="http://www.tooplate.com" target="_parent">Tooplate</a>
+            </p>
+        </footer>
+
+    </div>
+    <!-- container-fluid -->
+
+    <!-- load JS files -->
+
+    <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    <!-- jQuery (https://jquery.com/download/) -->
+    <script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
+    <!-- https://masonry.desandro.com/ -->
+    <script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
+    <!-- https://masonry.desandro.com/ -->
+
+    <!-- Templatemo scripts -->
+    <script>  
+
+        $(document).ready(function () {
+
+            // init Masonry
+            // https://codepen.io/craigwheeler/pen/MYjBga
+            var $grid = $('.grid').masonry({
+
+                // set itemSelector so .grid-sizer is not used in layout
+                // itemSelector: '.grid-item',
+                // use element for option
+                // columnWidth: '.grid-sizer',
+                // percentPosition: true
+
+                itemSelector: '.grid-item',
+                isFitWidth: true,
+                columnWidth: 1
+            });
+            // layout Masonry after each image loads
+            $grid.imagesLoaded().progress(function () {
+                $grid.masonry('layout');
+            });
+
+            // Update the current year in copyright
+            $('.tm-current-year').text(new Date().getFullYear());
+        });
+
+    </script>
+</body>
+
+</html>

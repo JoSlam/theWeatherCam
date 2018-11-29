@@ -1,0 +1,11 @@
+{% extends "base_page.html" %}
+{% block title %} The WeatherCan Image Details {% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tm-gallery-content">
+        <img src="{% static 'weather_images/' %}{{ image.url }}" alt="selected_image" height="720" width="1000">
+        <br>
+        <span style="font-size: 20px; font-weight:bold; color: #CC6733;">Image captured on: {{ image.created }}</span>
+    </div>
+{% endblock %}

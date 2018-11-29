@@ -1,0 +1,167 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- bootstrap css -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <title>Home</title>
+    <!--
+
+Template 2094 Mason
+
+http://www.tooplate.com/view/2094-mason
+
+-->
+    <!-- load stylesheets -->
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400">
+    <!-- Google web font "Open Sans", https://fonts.google.com/ -->
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <!-- Font Awesome, http://fontawesome.io/ -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    <!-- Bootstrap styles, https://getbootstrap.com/ -->
+    <link rel="stylesheet" href="{% static 'css/tooplate-style.css' %}">
+    <!-- Templatemo style -->
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- google font and fontawesome css -->
+    <link rel="stylesheet" href="{% static 'css/body.css' %}">
+    <!-- Body style -->
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="tm-body">
+            <div class="tm-sidebar sticky">
+                <section id="welcome" class="tm-content-box tm-banner margin-b-15">
+                    <a href="/">
+                        <div class="tm-banner-inner">
+                            <i class="material-icons md-48" style="font-size: 60px;">filter_drama</i>
+                            <h1 class="tm-banner-subtitle" style="font-size: 30px;">
+                                </i>
+                                <br/>The WeatherCam</i>
+                            </h1>
+                        </div>
+                    </a>
+                </section>
+                <nav class="tm-main-nav">
+                    <ul class="tm-main-nav-ul">
+                        <li class="tm-nav-item">
+                            <a href="/" class="tm-nav-item-link tm-button active">Home</a>
+                        </li>
+                        <li class="tm-nav-item">
+                            <a href="/gallery/" class="tm-nav-item-link tm-button">Gallery</a>
+                        </li>
+                        <li class="tm-nav-item">
+                            <a href="/archive/" class="tm-nav-item-link tm-button">Archive</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="tm-main-content">
+
+                <div class="row mb-5">
+
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pl-md-4 tm-flex-center">
+                        <div class="tm-about-text tm-flexbox-ie-fix">
+
+                            <h2 class="tm-orange-text mb-4">Current Weather</h2>
+                            <div class="mb-4">
+                                <table id="curr_weather" class="table table-striped">
+
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 text-center mb-md-0 mb-4">
+                        <div class="tm-about-text tm-flexbox-ie-fix">
+                            <h2 class="tm-orange-text mb-4">Latest Image Update</h2>
+                            <a href="gallery/{{ latest.id }}">
+                                <img src="{% static 'weather_images/' %}{{ latest.url }}" alt="latest" class="img-fluid" width="400" height="500">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- row -->
+
+                <div class="row mb-5">
+                    <div class="media tm-flexbox-ie-fix tm-width-ie-fix">
+                        <div class="tm-width-ie-fix tm-flexbox-ie-fix">
+                            <h2 class="tm-orange-text mb-4">Weather over last 7 days</h2>
+                            <nav>
+                                <ul class="nav nav-tabs nav-fill" id='highchart_tabs' role='tablist'>
+                                    <li class="nav-item">
+                                        <a href="#container1" class="nav-link active" data-toggle='tab' id='min_temp_tab' role='tab' aria-controls='container1' aria-selected='true'>Minimum Temperature</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#container2" class="nav-link" data-toggle='tab' id='max_temp_tab' role='tab' aria-controls="container2" aria-selected="false">Maximum Temperature</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#container3" class="nav-link" data-toggle='tab' id='wind_tab' role='tab' aria-controls="container3" aria-selected="false">Average Wind Speed</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#container4" class="nav-link" data-toggle='tab' id='hum_tab' role='tab' aria-controls="container4" aria-selected="false">Average Humidity</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#container5" class="nav-link" data-toggle='tab' id='press_tab' role='tab' aria-controls="container5" aria-selected="false">Average Pressure</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            
+                            <div class="tab-content" id="highchart_tab_content">
+                                <div class='tab-pane fade show active' role="tabpanel" aria-labelledby="min_temp_tab" id="container1"></div>
+                                <div class='tab-pane fade' role="tabpanel" aria-labelledby="max_temp_tab" id="container2"></div>
+                                <div class='tab-pane fade' role="tabpanel" aria-labelledby="wind_tab" id="container3"></div>
+                                <div class='tab-pane fade' role="tabpanel" aria-labelledby="hum_tab" id="container4"></div>
+                                <div class='tab-pane fade' role="tabpanel" aria-labelledby="press_tab" id="container5"></div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <!-- row -->
+            </div>
+        </div>
+
+        <footer class="tm-footer text-right">
+            <p>Copyright &copy;
+                <span class="tm-current-year">2018</span> Your Company - Design:
+                <a href="http://www.tooplate.com" target="_parent">Tooplate</a>
+            </p>
+        </footer>
+    </div>
+    <!-- container-fluid -->
+
+    <!-- load JS files -->
+
+    <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    <script src='{% static "js/client.js" %}'></script>
+    <script src='{% static "js/highchart.js" %}'></script>
+    <!-- bootsrap javascript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
+
+    <!-- jQuery (https://jquery.com/download/) -->
+    <script>  
+
+        $(document).ready(function () {
+            // Update the current year in copyright
+            $('.tm-current-year').text(new Date().getFullYear());
+        });
+
+    </script>
+</body>
+
+</html>
