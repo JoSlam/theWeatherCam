@@ -4,7 +4,7 @@ function renderChart(container, name, weather_array) {            //highchart re
         Highcharts.chart(container.id, {
             chart: {
                 height: 400,
-                width: 1000,
+                width: null,
                 // type: 'pie'
             },
 
