@@ -1,7 +1,8 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Avg, Max, Min
+from django.views.generic import View
 from datetime import timedelta
 import datetime
 import json
@@ -9,11 +10,14 @@ import json
 #model imports
 from .models import Weather
 from .models import WeatherImage
-from .models import Archived_data_form
+from .models import City
 
+#doc model imports
+from .docModels import CityUploadDoc
 
-def test_render(request):
-    return render(request, 'test_child.html');
+#doc forms imports
+from .forms import ArchivedDataForm
+from .forms import CityUploadForm
 
 
 #renders home page with corresponding JavaScript, image and highcharts to be used
@@ -48,9 +52,9 @@ def image_details(request, image_id):
 
 #processes archive form request
 def archive(request):
-    form = Archived_data_form()
+    form = ArchivedDataForm()
     if request.method == 'GET':
-        form = Archived_data_form(request.GET)
+        form = ArchivedDataForm(request.GET)
         if form.is_valid():
             weather_filter = Weather.objects.filter(date__date = request.GET['date']).order_by('-date')
             image_filter = WeatherImage.objects.filter(created__date = request.GET['date']).order_by('-created')
@@ -113,3 +117,44 @@ def aggregate():
         past_weather.append(day)
         start += timedelta(days=1)  # decrement date
     return past_weather
+
+
+
+class CityUploadView(View):
+    template_name = 'upload/upload_cities.html'
+    form_class = CityUploadForm
+
+    def get(self, request):
+        city_upload_form = self.form_class(None)
+        return render(request, self.template_name, {'form': city_upload_form})
+
+
+    def post(self, request):
+        city_form_uploaded = self.form_class(request.POST)
+        if city_form_uploaded.is_valid():
+            city_form_uploaded.save()
+            return redirect('weather:upload_cities')
+        return render(request, self.template_name, {'new_records'})
+
+
+
+
+
+def upload_cities(request):
+    with open('api/static/data/city.list.json', 'r', encoding='utf-8',errors='ignore') as city_file:
+        city_list = json.loads(city_file.read())
+    if any(city_list):
+        for index, city in enumerate(city_list):
+            # print('city name: ' + city['name'])
+            # print('country name: ' + city['country'])
+            # print('long: ' + str(city['coord']['lon']))
+            # print('lat: ' + str(city['coord']['lat']) + '\n')
+
+            #create new city obj
+            new_city = City(name=city['name'], county=city['country'], longitude= city['coord']['lon'], latitude=city['coord']['lat'])
+            print(new_city)
+            # new_city.save()
+
+            if(index > 2):
+                break
+    return HttpResponse("hi")

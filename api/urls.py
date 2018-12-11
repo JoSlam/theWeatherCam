@@ -25,6 +25,6 @@ urlpatterns = [
     #/api/archive
     url(r'^archive/$', views.archive, name='archive_data'),
 
-    #/api/archive
-    url(r'^test/$', views.test_render, name='test_render'),
+    #/api/upload_cities
+    url(r'^upload_cities/$', views.CityUploadView.as_view(), name='upload_cities'),
 ]

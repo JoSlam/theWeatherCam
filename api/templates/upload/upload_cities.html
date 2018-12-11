@@ -1,0 +1,14 @@
+{% extends "base_page.html" %}
+{% block title %} The WeatherCam City Upload {% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h2 class="display-4">Upload City Document</h2>
+        <form method="POST" id="city_upload" name="city_upload">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-primary tm-button-orange" type="submit">Submit</button>
+        </form>
+    </div>
+{% endblock %}
