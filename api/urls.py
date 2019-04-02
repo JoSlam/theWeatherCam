@@ -27,4 +27,7 @@ urlpatterns = [
 
     #/api/upload_cities
     url(r'^upload_cities/$', views.CityUploadView.as_view(), name='upload_cities'),
+
+    #/api/upload_cities
+    url(r'^show_weather/$', views.show_weather, name='show_weather'),
 ]

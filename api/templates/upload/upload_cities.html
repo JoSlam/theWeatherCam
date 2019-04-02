@@ -5,10 +5,36 @@
 {% block content %}
     <div class="container-fluid">
         <h2 class="display-4">Upload City Document</h2>
-        <form method="POST" id="city_upload" name="city_upload">
+        <form method="POST" id="city_upload" name="city_upload" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <button class="btn btn-primary tm-button-orange" type="submit">Submit</button>
         </form>
+
+        {% if cityList %}
+        <div>
+            <table class="table table-striped" style="padding-top: 5%;">
+                <thead>
+                    <th>ID</th>
+                    <th>City</th>
+                    <th>Country Code</th>
+                    <th>Created</th>
+                </thead>
+                {% if formSubmitted == 1 %}
+                    {% for city in cityList %}
+                    <tr>
+                        <td>{{ city.id }}</td>
+                        <td>{{ city.name }}</td>
+                        <td>{{ city.country }}</td>
+                        <td>{{ city.created }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </table>
+                {% elif not cityList and formSubmitted == 1 %}
+                <h3 class="display-5" style="padding-top: 5%;">No new cities created</h3>
+            {% endif %}
+        </div>
     </div>
+   
 {% endblock %}

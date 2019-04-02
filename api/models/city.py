@@ -1,6 +1,7 @@
 from django.db import models
 
 class City(models.Model):
+    city_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=250)
     country = models.CharField(max_length=250)
     longitude = models.FloatField()
@@ -8,8 +9,8 @@ class City(models.Model):
     
 
     class Meta:
-        ordering = ('name','country')
+        ordering = ('city_id', 'name','country')
 
     def __str__(self):
-        return '{0}{1}'.format(self.name, self.country)
+        return 'id: {0}, City: {1}, Country: {2}'.format(self.city_id, self.name, self.country)
     

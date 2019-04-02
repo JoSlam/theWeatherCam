@@ -1,29 +1,31 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.http import require_http_methods
-from django.db.models import Avg, Max, Min
-from django.views.generic import View
-from datetime import timedelta
 import datetime
 import json
+from datetime import timedelta
 
-#model imports
-from .models import Weather
-from .models import WeatherImage
-from .models import City
+from api.modules import weather_updater
+from django.db.models import Avg, Max, Min
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
+from django.views.generic import View
 
 #doc model imports
 from .docModels import CityUploadDoc
-
 #doc forms imports
-from .forms import ArchivedDataForm
-from .forms import CityUploadForm
+from .forms import ArchivedDataForm, CityUploadForm
+#model imports
+from .models import City, Weather, WeatherImage
+#module imports
+from .modules import weather_updater
 
 
 #renders home page with corresponding JavaScript, image and highcharts to be used
 def index(request):                                             #home page
-    max_time = WeatherImage.objects.aggregate(Max('created'))   #select image with the latest time created
-    latest = WeatherImage.objects.get(created=max_time['created__max']) #retrieve the filtered image url
+    try:
+        latest = WeatherImage.objects.latest('created')
+    except:
+        latest = None
+
     print(latest)
     return render(request, 'weather/home.html', {'latest': latest, 'page_selected': 'home'})
 
@@ -124,20 +126,43 @@ class CityUploadView(View):
     template_name = 'upload/upload_cities.html'
     form_class = CityUploadForm
 
+    def createCity(self, city_id, name, country, longitude, latitude):
+        new_city, created = City.objects.get_or_create(
+            city_id = city_id,
+            defaults = {
+                "name": name,
+                "country": country,
+                "longitude": longitude,
+                "latitude": latitude
+            }
+        )
+        return {
+            'id': new_city.city_id,
+             'name': new_city.name,
+             'country': new_city.country,
+             'created': created
+             }
+
     def get(self, request):
         city_upload_form = self.form_class(None)
         return render(request, self.template_name, {'form': city_upload_form})
 
 
     def post(self, request):
-        city_form_uploaded = self.form_class(request.POST)
-        if city_form_uploaded.is_valid():
-            city_form_uploaded.save()
-            return redirect('weather:upload_cities')
-        return render(request, self.template_name, {'new_records'})
+        city_upload_form = self.form_class(request.POST, request.FILES)
+        context = {
+            "form": city_upload_form,
+            "formSubmitted": 1
+        }
 
-
-
+        if city_upload_form.is_valid():
+            doc_before_save = city_upload_form.save(commit=False)
+            city_upload_form.save()
+            with open(str(doc_before_save.document), 'r', encoding='utf-8') as city_file:
+                city_file_json_data = json.load(city_file)
+                city_list = list(map(lambda city_info: self.createCity(city_info['id'], city_info['name'], city_info['country'], city_info['coord']['lon'], city_info['coord']['lat']), city_file_json_data))
+                context.update({"cityList": city_list})
+        return render(request, self.template_name)
 
 
 def upload_cities(request):
@@ -157,4 +182,9 @@ def upload_cities(request):
 
             if(index > 2):
                 break
+    return HttpResponse("hi")
+
+def show_weather(request):
+    response = weather_updater.get_weather_json()
+    print(response)
     return HttpResponse("hi")
