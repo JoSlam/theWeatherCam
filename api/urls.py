@@ -28,6 +28,12 @@ urlpatterns = [
     #/api/upload_cities
     url(r'^upload_cities/$', views.CityUploadView.as_view(), name='upload_cities'),
 
-    #/api/upload_cities
+    #/api/latest_update
+    url(r'^latest_update/$', views.latest_update, name='latest_update'),
+
+    #/api/show_weather
     url(r'^show_weather/$', views.show_weather, name='show_weather'),
+
+    #/api/update_weather
+    url(r'^update_weather/$', views.update_weather, name='update_weather'),
 ]

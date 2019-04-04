@@ -1,5 +1,6 @@
-from api.models import Weather
+from api.models import Weather, City
 import requests
+
 
 
 def get_weather_json():
@@ -26,13 +27,18 @@ def update_forecast():
     json = get_weather_json()
     if json is not None:
         try:
+            city = None
+            city = City.objects.get(city_id=json['id'])
+
             new_weather = Weather()
-            
-            # open weather map gives temps in Kelvin. We want celsius.              
-            temp_in_celsius = json['main']['temp'] - 273.15
-            new_weather.temp = temp_in_celsius
-            new_weather.city = json['name']
+            new_weather.temp = json['main']['temp'] - 273.15
+            new_weather.wind_speed = json['wind']['speed']
+            new_weather.humidity = json['main']['humidity']
+            new_weather.pressure = json['main']['pressure']
+            new_weather.city = city 
             new_weather.save()
-            print("saving...\n" + new_weather)
-        except:
-            pass
+            print("saving...", new_weather)
+            return new_weather
+        except Exception as e:
+            print("Error: ", e)
+            return None

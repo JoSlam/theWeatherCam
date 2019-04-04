@@ -1,8 +1,9 @@
 import datetime
 import json
+import decimal
+
 from datetime import timedelta
 
-from api.modules import weather_updater
 from django.db.models import Avg, Max, Min
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -162,29 +163,33 @@ class CityUploadView(View):
                 city_file_json_data = json.load(city_file)
                 city_list = list(map(lambda city_info: self.createCity(city_info['id'], city_info['name'], city_info['country'], city_info['coord']['lon'], city_info['coord']['lat']), city_file_json_data))
                 context.update({"cityList": city_list})
-        return render(request, self.template_name)
+        return render(request, self.template_name, context)
 
 
-def upload_cities(request):
-    with open('api/static/data/city.list.json', 'r', encoding='utf-8',errors='ignore') as city_file:
-        city_list = json.loads(city_file.read())
-    if any(city_list):
-        for index, city in enumerate(city_list):
-            # print('city name: ' + city['name'])
-            # print('country name: ' + city['country'])
-            # print('long: ' + str(city['coord']['lon']))
-            # print('lat: ' + str(city['coord']['lat']) + '\n')
 
-            #create new city obj
-            new_city = City(name=city['name'], county=city['country'], longitude= city['coord']['lon'], latitude=city['coord']['lat'])
-            print(new_city)
-            # new_city.save()
-
-            if(index > 2):
-                break
-    return HttpResponse("hi")
 
 def show_weather(request):
     response = weather_updater.get_weather_json()
     print(response)
+    return JsonResponse(response, json_dumps_params={'indent': 2})
+
+def update_weather(request):
+    res = weather_updater.update_forecast()
+    print(res)
     return HttpResponse("hi")
+
+def latest_update(request):
+    latest_forecast = Weather.objects.latest('date')
+    print(latest_forecast)
+    city = latest_forecast.city.name
+    temperature_in_c = latest_forecast.temp
+    temperature_in_k = latest_forecast.temp + 273.15
+    timestamp = "{t.year}/{t.month:02d}/{t.day:02d} - {t.hour:02d}:{t.minute:02d}:{t.second:02d}".format( t=latest_forecast.date)
+
+    context = {
+        'city':city,
+        'temperature_in_c': temperature_in_c,
+        'temperature_in_k': round(temperature_in_k,2),
+        'utc_update_time': timestamp
+        }
+    return render(request, 'weather/latest_update.html', context)

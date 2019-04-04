@@ -17,3 +17,7 @@ class Weather(models.Model):
     def __str__(self):
         return '{0}'.format(self.date)
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.date = datetime.utcnow()
+        return super(Weather, self).save(*args, **kwargs)
