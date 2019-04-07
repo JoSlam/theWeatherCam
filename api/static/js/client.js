@@ -5,7 +5,7 @@ const api_key = '13ceb7203fe9f550a498f8e24d080268'
 const units = 'metric';
 const url = base_url + "" + search_area + '&APPID=' + api_key + '&units=' + units;
 
-document.addEventListener('DOMContentLoaded', getData);
+//document.addEventListener('DOMContentLoaded', getData);
 function getData() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {

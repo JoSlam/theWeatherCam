@@ -31,7 +31,7 @@ def update_forecast():
             city = City.objects.get(city_id=json['id'])
 
             new_weather = Weather()
-            new_weather.temp = json['main']['temp'] - 273.15
+            new_weather.temp = json['main']['temp']
             new_weather.wind_speed = json['wind']['speed']
             new_weather.humidity = json['main']['humidity']
             new_weather.pressure = json['main']['pressure']

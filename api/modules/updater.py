@@ -1,6 +1,6 @@
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from modules import weather_updater
+from . import weather_updater
 
 def start():
     scheduler = BackgroundScheduler()

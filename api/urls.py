@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^chart/$', views.chart, name="chart"),
 
     #/api/chart_data
-    url(r'^chart_data/$', views.chart_data, name='chart_data'),
+    url(r'^chart_data/', views.chart_data, name='chart_data'),
 
     #/api/gallery   still needs work
     url(r'^gallery/$', views.gallery, name='gallery'),

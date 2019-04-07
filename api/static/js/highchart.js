@@ -1,11 +1,10 @@
-function renderChart(container, name, weather_array) {            //highchart render function
+function renderChart(container, name, weather_array, chart_height) {            //highchart render function
     var today = new Date();
     if (container != null) {
         Highcharts.chart(container.id, {
             chart: {
-                height: 400,
+                height: chart_height,
                 width: null,
-                // type: 'pie'
             },
 
             xAxis: {
@@ -53,10 +52,11 @@ function loadChart(){
         if(this.readyState === 4 && this.status === 200){
             var container_id = 0;
             var json_dat = JSON.parse(this.responseText);
+            console.log(json_dat);
             var highchart_containers = document.getElementsByName('highchart-container');
             if(json_dat != null && highchart_containers != null && highchart_containers.length > 0){
                 for (let i in json_dat) {
-                    renderChart(highchart_containers[container_id], i, json_dat[i]);
+                    renderChart(highchart_containers[container_id], i, json_dat[i], 400);
                     container_id++;
                 }
             }
@@ -69,3 +69,4 @@ function loadChart(){
 document.addEventListener('DOMContentLoaded', function(){
     loadChart();
 });
+

@@ -1,0 +1,33 @@
+<div class="tm-sidebar sticky">
+    <section id="welcome" class="tm-content-box tm-banner margin-b-15">
+        <a href="/">
+            <div class="tm-banner-inner">
+                <i class="material-icons md-48" style="font-size: 60px;">filter_drama</i>
+                <h1 class="tm-banner-subtitle" style="font-size: 30px;">
+                    </i>
+                    <br />The WeatherCam</i>
+                </h1>
+            </div>
+        </a>
+    </section>
+    <nav class="tm-main-nav">
+        <ul class="tm-main-nav-ul">
+            <li class="tm-nav-item">
+                <a href="/"
+                    class="tm-nav-item-link tm-button {% if page_selected and page_selected == 'home' %}active{% endif %}">
+                    Home
+                </a>
+            </li>
+            <li class="tm-nav-item">
+                <a href="/gallery/"
+                    class="tm-nav-item-link tm-button {% if page_selected and page_selected == 'detail' or page_selected == 'gallery' %}active{% endif %}">Gallery</a>
+            </li>
+            <li class="tm-nav-item">
+                <a href="/archive/"
+                    class="tm-nav-item-link tm-button {% if page_selected and page_selected == 'archive' %}active{% endif %}">
+                    Archive
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

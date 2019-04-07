@@ -1,9 +1,9 @@
 import datetime
-import json
 import decimal
-
+import json
 from datetime import timedelta
 
+#django imports
 from django.db.models import Avg, Max, Min
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -22,13 +22,20 @@ from .modules import weather_updater
 
 #renders home page with corresponding JavaScript, image and highcharts to be used
 def index(request):                                             #home page
+    context = {}
     try:
-        latest = WeatherImage.objects.latest('created')
+        latest_image = WeatherImage.objects.latest('created')
+        latest_weather = Weather.objects.latest('date')
+        #add data for chart
     except:
-        latest = None
+        latestImage = None
+        latestWeather = None
+    context.update({"latest_image": latest_image})
+    context.update({"latest_weather": latest_weather})
+    context.update({"page_selected": "home"})
 
-    print(latest)
-    return render(request, 'weather/home.html', {'latest': latest, 'page_selected': 'home'})
+
+    return render(request, 'weather/home.html', context)
 
 
 #returns aggregated data for highchart
@@ -39,12 +46,12 @@ def chart(request):
 #renders gallery view and all images currently present in the database
 def gallery(request):
     start = datetime.date.today() - timedelta(days=6)
-    img_data = []
-    for i in range(0,7):
-        filtered_imgs = WeatherImage.objects.filter(created__date=start)
-        img_data.append({'date': start, 'imgs': filtered_imgs})
-        start += timedelta(days=1)
-    return render(request, 'gallery/gallery.html', {'img_data': img_data, 'page_selected': 'gallery'})
+    img_data = WeatherImage.objects.filter(created__range=(start, datetime.date.today()))
+    context = {
+        'img_data': img_data,
+        'page_selected': 'gallery'
+    }
+    return render(request, 'gallery/gallery.html', context)
 
 
 #renders image and its corresponding details
@@ -104,19 +111,37 @@ def chart_data(request):                                #aggregate and return ag
 def aggregate():                                        
     past_weather = []
     start = datetime.date.today() - timedelta(days=7)
+    fields = get_model_fields(Weather)
+    field_ignore = ['id', 'date', 'city']
     for i in range(0, 7):
         day = {}
+        new_day = {}
 
-        #aggregated data
-        day.update({'date': start})
+        # #aggregated data
+        # day.update({'date': start})
+        # day.update({'temp': })
+        # day.update({'wind': })
+        # day.update({'hum': })
+        # day.update({'press': })
+
+        data_set = Weather.objects.filter(date__date=start) 
+        #day.update(Weather.objects.filter(date__date=start).Max())
+
+        for field in fields:
+            field_data = {}
+            if field not in field_ignore:
+                field_data.update(data_set.aggregate(Max(field)))
+                field_data.update(data_set.aggregate(Min(field)))
+                field_data.update(data_set.aggregate(Avg(field)))
+                new_day.update({field: field_data})
+            
+        print(new_day)
+
         day.update(Weather.objects.filter(date__date=start).aggregate(Max('temp')))
         day.update(Weather.objects.filter(date__date=start).aggregate(Min('temp')))
-        day.update(Weather.objects.filter(
-            date__date=start).aggregate(Avg('pressure')))
-        day.update(Weather.objects.filter(
-            date__date=start).aggregate(Avg('humidity')))
-        day.update(Weather.objects.filter(
-            date__date=start).aggregate(Avg('wind_speed')))
+        day.update(Weather.objects.filter(date__date=start).aggregate(Avg('pressure')))
+        day.update(Weather.objects.filter(date__date=start).aggregate(Avg('humidity')))
+        day.update(Weather.objects.filter(date__date=start).aggregate(Avg('wind_speed')))
         past_weather.append(day)
         start += timedelta(days=1)  # decrement date
     return past_weather
@@ -170,13 +195,12 @@ class CityUploadView(View):
 
 def show_weather(request):
     response = weather_updater.get_weather_json()
-    print(response)
     return JsonResponse(response, json_dumps_params={'indent': 2})
 
 def update_weather(request):
     res = weather_updater.update_forecast()
     print(res)
-    return HttpResponse("hi")
+    return HttpResponse("Created") if res else HttpResponse("Failed to create")
 
 def latest_update(request):
     latest_forecast = Weather.objects.latest('date')
@@ -193,3 +217,7 @@ def latest_update(request):
         'utc_update_time': timestamp
         }
     return render(request, 'weather/latest_update.html', context)
+
+
+def get_model_fields(given_model):
+    return list (field.name for field in given_model._meta.get_fields())
